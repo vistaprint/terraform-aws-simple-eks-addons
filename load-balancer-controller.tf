@@ -34,8 +34,6 @@ resource "helm_release" "load_balancer_controller" {
   chart            = "aws-load-balancer-controller"
   version          = "1.1.2"
 
-  # TODO: make sure Calico CNI works!!!
-
   # Using Calico CNI requires setting hostNetwork to true
   # (see: https://github.com/aws/eks-charts/blob/c70be3b80dc56599e37da1ff568aef57000d6afa/stable/aws-load-balancer-controller/values.yaml#L146)
   values = [
