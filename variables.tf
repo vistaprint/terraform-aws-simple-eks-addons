@@ -11,12 +11,9 @@ variable "tags" {
   default = {}
 }
 
-variable "ingress" {
-  type = object({
-    cluster_zone    = string
-    wildcard_domain = string
-  })
-  default = null
+variable "install_load_balancer_controller" {
+  type    = bool
+  default = false
 }
 
 variable "install_metrics_server" {
