@@ -4,9 +4,13 @@ resource "null_resource" "cluster_autoscaler" {
   triggers = {
     always_run = uuid()
     yaml = replace(
-      file("${path.module}/data/cluster-autoscaler-autodiscover.yaml"),
-      "<YOUR CLUSTER NAME>",
-      var.cluster_name
+        replace(
+          file("${path.module}/data/cluster-autoscaler-autodiscover.yaml"),
+          "<YOUR CLUSTER NAME>",
+          var.cluster_name
+      ),
+      "<YOUR AWS REGION>",
+      var.region
     )
   }
 
