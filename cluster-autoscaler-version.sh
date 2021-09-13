@@ -2,7 +2,7 @@
 
 if [[ $# -eq 0 ]]
 then
-  echo 'USAGE: version.sh <kubernetes-version>'
+  echo 'USAGE: cluster-autoscaler-version.sh <kubernetes-version>'
   exit 1
 fi
 
@@ -12,11 +12,10 @@ VERSION=$(git \
     --exit-code \
     --tags \
     --sort='v:refname' \
-    git@github.com:kubernetes/autoscaler.git \
+    https://github.com/kubernetes/autoscaler.git \
     "refs/tags/cluster-autoscaler-$1*" \
   | tail -n 1 \
   | cut -d '/' -f 3 \
   | cut -d '-' -f 3)
 
 jq -n --arg version "$VERSION" '{"version":$version}'
-
