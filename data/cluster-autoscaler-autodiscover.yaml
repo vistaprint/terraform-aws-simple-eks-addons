@@ -144,6 +144,9 @@ spec:
       serviceAccountName: cluster-autoscaler
       containers:
         - image: eu.gcr.io/k8s-artifacts-prod/autoscaling/cluster-autoscaler:v<CLUSTER AUTOSCALER VERSION>
+          env:
+            - name: AWS_REGION
+              value: <AWS REGION>
           name: cluster-autoscaler
           resources:
             limits:
@@ -151,7 +154,7 @@ spec:
               memory: 600Mi
             requests:
               cpu: 100m
-              memory: 600Mi
+              memory: 300Mi
           command:
             - ./cluster-autoscaler
             - --v=4
