@@ -5,6 +5,15 @@ resource "null_resource" "container_insights" {
     always_run = uuid()
   }
 
+  # We downloaded the cwagent-fluent-bit-quickstart.yaml file from
+  # https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/quickstart/cwagent-fluent-bit-quickstart.yaml
+  #
+  # Then, we modified that file to increase the version of aws-for-fluent-bit to 2.21.0.
+  # Otherwise, logs were not reaching CloudWatch due to this bug in Fluent Bit:
+  # https://github.com/fluent/fluent-bit/issues/2840
+  #
+  # TODO: once the file available in the GitHub repo uses version 2.21.0 or higher,
+  #   let's remove the file from the data folder, and use the one in the repo instead.
   provisioner "local-exec" {
     command = <<-EOT
       cat ${path.module}/data/cwagent-fluent-bit-quickstart.yaml \
