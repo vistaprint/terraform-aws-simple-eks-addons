@@ -2,12 +2,13 @@ package test
 
 import (
 	"context"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/eks"
 	"log"
 	"os"
 	"testing"
+
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/eks"
 
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
@@ -39,7 +40,7 @@ func TestTerraformBasicExample(t *testing.T) {
 	addons := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 		TerraformDir: "../examples/basic/post-setup",
 		Vars: map[string]interface{}{
-			"aws_region":  awsRegion,
+			"aws_region": awsRegion,
 		},
 		NoColor: true,
 	})
@@ -55,7 +56,7 @@ func TestTerraformBasicExample(t *testing.T) {
 }
 
 func checkNodeGroupExists(t *testing.T) {
-	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("eu-west-2"))
+	cfg, err := config.LoadDefaultConfig(context.TODO())
 	if err != nil {
 		log.Fatal(err)
 	}
