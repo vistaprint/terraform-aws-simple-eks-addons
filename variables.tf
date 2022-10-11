@@ -21,17 +21,7 @@ variable "install_metrics_server" {
   default = false
 }
 
-variable "install_container_insights" {
-  type    = bool
-  default = false
-}
-
 variable "enable_cluster_autoscaler" {
-  type    = bool
-  default = false
-}
-
-variable "use_calico_cni" {
   type    = bool
   default = false
 }
