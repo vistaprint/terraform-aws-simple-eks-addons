@@ -3,7 +3,7 @@ data "aws_iam_role" "worker_role" {
 }
 
 resource "aws_iam_role_policy" "cluster_autoscaler" {
-  count = var.enable_cluster_autoscaler ? 1 : 0
+  count = var.cluster_autoscaler != null ? 1 : 0
 
   name = "cluster-autoscaler"
   role = data.aws_iam_role.worker_role.id
@@ -34,7 +34,7 @@ resource "aws_iam_role_policy" "cluster_autoscaler" {
 #   (see: https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/deploy/installation/#iam-permissions)
 
 resource "aws_iam_role_policy" "aws_load_balancer_controller" {
-  count = var.install_load_balancer_controller ? 1 : 0
+  count = var.load_balancer_controller != null ? 1 : 0
 
   name = "aws-load-balancer-policy"
   role = data.aws_iam_role.worker_role.id
