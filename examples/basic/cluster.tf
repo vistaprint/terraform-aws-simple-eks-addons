@@ -1,9 +1,9 @@
 module "cluster" {
   source  = "vistaprint/simple-eks/aws"
-  version = "0.3.5"
+  version = "0.4.0-rc1"
 
   cluster_name    = "simple-eks-integration-test-for-eks-addons"
-  cluster_version = "1.21"
+  cluster_version = "1.23"
   vpc_name        = var.vpc_name
 
   region  = var.aws_region
@@ -12,11 +12,11 @@ module "cluster" {
 
 module "on_demand_node_group" {
   source  = "vistaprint/simple-eks-node-group/aws"
-  version = "0.5.2"
+  version = "0.6.0-rc1"
 
   cluster_name       = "simple-eks-integration-test-for-eks-addons"
   node_group_name    = "on-demand"
-  node_group_version = "1.21"
+  node_group_version = "1.23"
 
   instance_types = ["t3a.medium"]
 

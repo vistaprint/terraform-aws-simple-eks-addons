@@ -35,6 +35,7 @@ func TestTerraformBasicExample(t *testing.T) {
 			"vpc_name":    vpcName,
 		},
 		NoColor: true,
+		Upgrade: true,
 	})
 
 	addons := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
