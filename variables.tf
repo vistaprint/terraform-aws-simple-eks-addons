@@ -11,27 +11,29 @@ variable "tags" {
   default = {}
 }
 
-variable "install_load_balancer_controller" {
-  type    = bool
-  default = false
+variable "load_balancer_controller" {
+  type = object({
+    enabled       = bool
+    chart_version = optional(string)
+    image_tag     = optional(string)
+  })
+  default = null
 }
 
-variable "install_metrics_server" {
-  type    = bool
-  default = false
+variable "metrics_server" {
+  type = object({
+    enabled       = bool
+    chart_version = optional(string)
+    image_tag     = optional(string)
+  })
+  default = null
 }
 
-variable "install_container_insights" {
-  type    = bool
-  default = false
-}
-
-variable "enable_cluster_autoscaler" {
-  type    = bool
-  default = false
-}
-
-variable "use_calico_cni" {
-  type    = bool
-  default = false
+variable "cluster_autoscaler" {
+  type = object({
+    enabled       = bool
+    chart_version = optional(string)
+    image_tag     = optional(string)
+  })
+  default = null
 }

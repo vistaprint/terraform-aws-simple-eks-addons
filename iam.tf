@@ -3,7 +3,7 @@ data "aws_iam_role" "worker_role" {
 }
 
 resource "aws_iam_role_policy" "cluster_autoscaler" {
-  count = var.enable_cluster_autoscaler ? 1 : 0
+  count = var.cluster_autoscaler != null ? 1 : 0
 
   name = "cluster-autoscaler"
   role = data.aws_iam_role.worker_role.id
@@ -34,7 +34,7 @@ resource "aws_iam_role_policy" "cluster_autoscaler" {
 #   (see: https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/deploy/installation/#iam-permissions)
 
 resource "aws_iam_role_policy" "aws_load_balancer_controller" {
-  count = var.install_load_balancer_controller ? 1 : 0
+  count = var.load_balancer_controller != null ? 1 : 0
 
   name = "aws-load-balancer-policy"
   role = data.aws_iam_role.worker_role.id
@@ -45,16 +45,31 @@ resource "aws_iam_role_policy" "aws_load_balancer_controller" {
       {
         "Effect" : "Allow",
         "Action" : [
-          "iam:CreateServiceLinkedRole",
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Resource" : "*",
+        "Condition" : {
+          "StringEquals" : {
+            "iam:AWSServiceName" : "elasticloadbalancing.amazonaws.com"
+          }
+        }
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : [
           "ec2:DescribeAccountAttributes",
           "ec2:DescribeAddresses",
+          "ec2:DescribeAvailabilityZones",
           "ec2:DescribeInternetGateways",
           "ec2:DescribeVpcs",
+          "ec2:DescribeVpcPeeringConnections",
           "ec2:DescribeSubnets",
           "ec2:DescribeSecurityGroups",
           "ec2:DescribeInstances",
           "ec2:DescribeNetworkInterfaces",
           "ec2:DescribeTags",
+          "ec2:GetCoipPoolUsage",
+          "ec2:DescribeCoipPools",
           "elasticloadbalancing:DescribeLoadBalancers",
           "elasticloadbalancing:DescribeLoadBalancerAttributes",
           "elasticloadbalancing:DescribeListeners",
@@ -189,6 +204,19 @@ resource "aws_iam_role_policy" "aws_load_balancer_controller" {
             "aws:ResourceTag/elbv2.k8s.aws/cluster" : "false"
           }
         }
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "elasticloadbalancing:AddTags",
+          "elasticloadbalancing:RemoveTags"
+        ],
+        "Resource" : [
+          "arn:aws:elasticloadbalancing:*:*:listener/net/*/*/*",
+          "arn:aws:elasticloadbalancing:*:*:listener/app/*/*/*",
+          "arn:aws:elasticloadbalancing:*:*:listener-rule/net/*/*/*",
+          "arn:aws:elasticloadbalancing:*:*:listener-rule/app/*/*/*"
+        ]
       },
       {
         "Effect" : "Allow",

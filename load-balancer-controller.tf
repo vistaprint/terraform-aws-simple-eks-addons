@@ -6,8 +6,15 @@ provider "helm" {
   }
 }
 
+locals {
+  crds_tag = (try(var.load_balancer_controller.image_tag) == null
+    ? "master"
+    : var.load_balancer_controller.image_tag
+  )
+}
+
 resource "null_resource" "load_balancer_target_group_bindings" {
-  count = var.install_load_balancer_controller ? 1 : 0
+  count = try(var.load_balancer_controller.enabled) == true ? 1 : 0
 
   triggers = {
     always_run = uuid()
@@ -16,7 +23,7 @@ resource "null_resource" "load_balancer_target_group_bindings" {
   provisioner "local-exec" {
     command = <<-EOT
        kubectl --context='${data.aws_eks_cluster.cluster.arn}' \
-        apply -k "github.com/aws/eks-charts/stable/aws-load-balancer-controller//crds?ref=v0.0.41"
+        apply -k "github.com/aws/eks-charts/stable/aws-load-balancer-controller//crds?ref=${local.crds_tag}"
     EOT
   }
 
@@ -26,22 +33,27 @@ resource "null_resource" "load_balancer_target_group_bindings" {
 }
 
 resource "helm_release" "load_balancer_controller" {
-  count = var.install_load_balancer_controller ? 1 : 0
+  count = try(var.load_balancer_controller.enabled) == true ? 1 : 0
 
-  name             = "aws-load-balancer-controller"
-  namespace        = "kube-system"
-  repository       = "https://aws.github.io/eks-charts"
-  chart            = "aws-load-balancer-controller"
-  version          = "1.1.2"
+  name       = "aws-load-balancer-controller"
+  namespace  = "kube-system"
+  repository = "https://aws.github.io/eks-charts"
+  chart      = "aws-load-balancer-controller"
+  version    = var.load_balancer_controller.chart_version
 
-  # Using Calico CNI requires setting hostNetwork to true
-  # (see: https://github.com/aws/eks-charts/blob/c70be3b80dc56599e37da1ff568aef57000d6afa/stable/aws-load-balancer-controller/values.yaml#L146)
-  values = [
-    <<-EOT
-      clusterName: ${var.cluster_name}
-      hostNetwork: ${var.use_calico_cni}
-    EOT
-  ]
+  set {
+    name  = "clusterName"
+    value = var.cluster_name
+  }
+
+  dynamic "set" {
+    for_each = var.load_balancer_controller.image_tag != null ? [1] : []
+
+    content {
+      name  = "image.tag"
+      value = var.load_balancer_controller.image_tag
+    }
+  }
 
   depends_on = [
     null_resource.load_balancer_target_group_bindings

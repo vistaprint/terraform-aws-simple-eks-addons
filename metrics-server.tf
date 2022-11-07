@@ -1,26 +1,18 @@
-resource "null_resource" "metrics_server" {
-  count = var.install_metrics_server ? 1 : 0
+resource "helm_release" "metrics_server" {
+  count = try(var.metrics_server.enabled) == true ? 1 : 0
 
-  triggers = {
-    always_run = uuid()
-  }
+  name       = "metrics-server"
+  namespace  = "kube-system"
+  repository = "https://kubernetes-sigs.github.io/metrics-server"
+  chart      = "metrics-server"
+  version    = var.metrics_server.chart_version
 
-  provisioner "local-exec" {
-    command = <<-EOT
-      echo '${data.template_file.metrics_server.rendered}' |
-        kubectl --context='${data.aws_eks_cluster.cluster.arn}' apply -f -
-    EOT
-  }
+  dynamic "set" {
+    for_each = var.metrics_server.image_tag != null ? [1] : []
 
-  depends_on = [
-    null_resource.check_aws_credentials_are_available
-  ]
-}
-
-data "template_file" "metrics_server" {
-  template = file("${path.module}/data/metrics-server.tpl.yaml")
-
-  vars = {
-    host_network = var.use_calico_cni
+    content {
+      name  = "image.tag"
+      value = var.metrics_server.image_tag
+    }
   }
 }
