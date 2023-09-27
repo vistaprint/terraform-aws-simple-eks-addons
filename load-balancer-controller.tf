@@ -1,11 +1,3 @@
-provider "helm" {
-  kubernetes {
-    host                   = data.aws_eks_cluster.cluster.endpoint
-    cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
-    token                  = data.aws_eks_cluster_auth.auth.token
-  }
-}
-
 locals {
   crds_tag = (try(var.load_balancer_controller.image_tag) == null
     ? "master"
@@ -23,7 +15,7 @@ resource "null_resource" "load_balancer_target_group_bindings" {
   provisioner "local-exec" {
     command = <<-EOT
        kubectl --context='${data.aws_eks_cluster.cluster.arn}' \
-        apply -k "github.com/aws/eks-charts/stable/aws-load-balancer-controller//crds?ref=${local.crds_tag}"
+        apply -k "github.com/aws/eks-charts/stable/aws-load-balancer-controller/crds?ref=${local.crds_tag}"
     EOT
   }
 
