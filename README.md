@@ -2,9 +2,9 @@
 
 This module manages several add-ons that might be needed in an EKS cluster. It currently supports the following add-ons:
 
-- Metrics server
-- Cluster autoscaling
-- AWS Load Balancer Controller
+- [Metrics server](https://artifacthub.io/packages/helm/metrics-server/metrics-server)
+- [Cluster autoscaling](https://artifacthub.io/packages/helm/cluster-autoscaler/cluster-autoscaler)
+- [AWS Load Balancer Controller](https://artifacthub.io/packages/helm/aws/aws-load-balancer-controller)
 
 Ideally this module should not be necessary, and all these add-ons could be installed from the `simple-eks` module itself. But, the Terraform provider for Kubernetes has some limitations that prevented us from doing so. In short, the Kubernetes provider cannot be initialized with credentials obtained in the same `terraform apply` execution where the cluster is created. (See the warning box in <https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs#stacking-with-managed-kubernetes-cluster-resources> for more details).
 
