@@ -1,5 +1,5 @@
 resource "null_resource" "load_balancer_target_group_bindings" {
-  count = try(var.load_balancer_controller.enabled) == true ? 1 : 0
+  count = try(var.load_balancer_controller.enabled, null) == true ? 1 : 0
 
   triggers = {
     always_run = uuid()
@@ -18,7 +18,7 @@ resource "null_resource" "load_balancer_target_group_bindings" {
 }
 
 resource "helm_release" "load_balancer_controller" {
-  count = try(var.load_balancer_controller.enabled) == true ? 1 : 0
+  count = try(var.load_balancer_controller.enabled, null) == true ? 1 : 0
 
   name       = "aws-load-balancer-controller"
   namespace  = "kube-system"
