@@ -47,7 +47,7 @@ func TestTerraformBasicExample(t *testing.T) {
 	})
 
 	// Defer functions are executed in Last In, First Out order
-	// defer terraform.Destroy(t, cluster)
+	defer terraform.Destroy(t, cluster)
 	defer terraform.Destroy(t, addons)
 
 	terraform.InitAndApply(t, cluster)
