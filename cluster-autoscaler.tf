@@ -1,11 +1,11 @@
 data "external" "cluster_autoscaler_version" {
-  count = try(var.cluster_autoscaler.enabled) == true ? 1 : 0
+  count = try(var.cluster_autoscaler.enabled, null) == true ? 1 : 0
 
   program = ["bash", "${path.module}/cluster-autoscaler-version.sh", data.aws_eks_cluster.cluster.version]
 }
 
 resource "helm_release" "cluster_autoscaler" {
-  count = try(var.cluster_autoscaler.enabled) == true ? 1 : 0
+  count = try(var.cluster_autoscaler.enabled, null) == true ? 1 : 0
 
   name       = "cluster-autoscaler"
   namespace  = "kube-system"

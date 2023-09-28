@@ -1,5 +1,5 @@
 resource "helm_release" "metrics_server" {
-  count = try(var.metrics_server.enabled) == true ? 1 : 0
+  count = try(var.metrics_server.enabled, null) == true ? 1 : 0
 
   name       = "metrics-server"
   namespace  = "kube-system"
