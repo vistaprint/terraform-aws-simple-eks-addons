@@ -16,6 +16,7 @@ variable "load_balancer_controller" {
     enabled       = bool
     chart_version = optional(string)
     image_tag     = optional(string)
+    enable_wafv2  = optional(bool)
   })
   default = null
 }

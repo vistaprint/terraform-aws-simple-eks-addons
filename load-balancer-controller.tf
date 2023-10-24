@@ -40,6 +40,15 @@ resource "helm_release" "load_balancer_controller" {
     }
   }
 
+  dynamic "set" {
+    for_each = var.load_balancer_controller.enable_wafv2 != null ? [1] : []
+
+    content {
+      name  = "enableWafv2"
+      value = var.load_balancer_controller.enable_wafv2
+    }
+  }
+
   depends_on = [
     null_resource.load_balancer_target_group_bindings
   ]
